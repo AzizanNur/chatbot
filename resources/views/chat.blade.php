@@ -16,22 +16,27 @@
             <div class="col-md-8 offset-md-2">
               <div class="card">
                 <div class="card-body">
-                    @foreach ($response->choices as $item)
-                    <p>
-                        <strong>{{ $item->message->role }}</strong>
-                        <span>{{ $item->message->content }}</span>
-                    </p>
-                    @endforeach
+                    @forelse ($context as $item)
+                        <p>
+                            <strong>{{ $item['role'] }}</strong>
+                            <span>{{ $item['content'] }}</span>
+                        </p>
+                    @empty
+
+                    @endforelse
+
                 </div>
                 <div class="card-footer">
-                    <form action="">
-                      <div class="input-group">
-                        <textarea name="" id="" class="form-control"></textarea>
+                    <form action="{{ route('user.prosesChat') }}" method="POST">
+                       @csrf
+                        <div class="input-group">
+                        <textarea name="content" id="" class="form-control"></textarea>
                         <div class="input-group-append">
                           <button class="btn btn-primary form-control" type="submit">Send</button>
                         </div>
                       </div>
                     </form>
+                    <a href="/hapus">hapus</a>
                 </div>
               </div>
             </div>

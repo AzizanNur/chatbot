@@ -2,40 +2,49 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use OpenAI;
+use Illuminate\Support\Facades\Session;
 
 class ChatController extends Controller
 {
     function index(){
 
+        if(session()->get('chat')){
+            $context = session()->get('chat');
+        }else{
+            $context[] = ['role' => 'Assistant', 'content' => 'Halo Ajukan Pertanyaan Anda?'];
+        }
+        return view('chat', compact('context'));
+    }
+
+    public function hapusSession(){
+        Session::forget('chat');
+        return redirect('chat');
+    }
+
+    public function prosesChat(Request $request){
+
+        $context = session()->get('chat');
+        $content = $request->content;
+        $context[] = ['role' => 'user', 'content' => $content];
         $yourApiKey = getenv('YOUR_API_KEY');
         $client = OpenAI::client($yourApiKey);
 
         $response = $client->chat()->create([
             'model' => 'gpt-3.5-turbo',
-            'messages' => [
-                ['role' => 'user', 'content' => 'Siapa kamu?'],
-            ],
+            'messages' => array_values($context),
         ]);
 
-        $response->id; // 'chatcmpl-6pMyfj1HF4QXnfvjtfzvufZSQq6Eq'
-        $response->object; // 'chat.completion'
-        $response->created; // 1677701073
-        $response->model; // 'gpt-3.5-turbo-0301'
-
         foreach ($response->choices as $result) {
-            $result->index; // 0
-            $result->message->role; // 'assistant'
-            $result->message->content; // '\n\nHello there! How can I assist you today?'
-            $result->finishReason; // 'stop'
+            $context[] = [
+                            'role'=>'assistant',
+                            'content'=>$result->message->content
+                        ];
         }
 
-        $response->usage->promptTokens; // 9,
-        $response->usage->completionTokens; // 12,
-        $response->usage->totalTokens; // 21
-
-        $response->toArray(); // ['id' => 'chatcmpl-6pMyfj1HF4QXnfvjtfzvufZSQq6Eq', ...]
-        return view('chat', compact('response'));
+        session(['chat' => $context]);
+        return redirect('chat');
     }
 }
