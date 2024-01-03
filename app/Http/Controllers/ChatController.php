@@ -47,4 +47,17 @@ class ChatController extends Controller
         session(['chat' => $context]);
         return redirect('chat');
     }
+
+    public function editContex(){
+        $context[] = ['role' => 'Assistant', 'content' => 'Halo Ajukan Pertanyaan Anda?'];
+        $initialContext = $context[0]['content'];
+        return view("edit", compact('initialContext'));
+    }
+
+    public function updateContext(Request $request){
+        $content = $request->content ?? 'Silahkan buat saya sebagai apa?';
+        $context[] = ['role' => 'user', 'content' => $content];
+        session(['chat' => $context]);
+        return redirect('edit');
+    }
 }

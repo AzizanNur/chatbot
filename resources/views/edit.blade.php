@@ -16,20 +16,13 @@
             <div class="col-md-8 offset-md-2">
               <div class="card">
                 <div class="card-body">
-                    @forelse ($context as $index => $item)
-                        @if($index > 0)
-                            <p>
-                                <strong>{{ $item['role'] }}</strong>
-                                <span>{{ $item['content'] }}</span>
-                            </p>
-                        @endif
-                    @empty
-
-                    @endforelse
-
+                    <p>
+                        <strong>{{ $initialContext }}</strong>
+                    </p>
                 </div>
                 <div class="card-footer">
-                    <form action="{{ route('user.prosesChat') }}" method="POST">
+                    <form action="{{ route('user.updateContext') }}" method="POST">
+                       @method('put')
                        @csrf
                         <div class="input-group">
                         <textarea name="content" id="" class="form-control"></textarea>

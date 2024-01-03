@@ -21,4 +21,6 @@ Route::get('/', function() {
 
 Route::get('/hapus', [ChatController::class, 'hapusSession'])->name('user.hapusSession');
 Route::get('/chat', [ChatController::class, 'index'])->name('user.index');
+Route::get('/edit', [ChatController::class, 'editContex'])->name('user.editContex');
 Route::post('/postchat', [ChatController::class, 'prosesChat'])->name('user.prosesChat');
+Route::put('/updateContext', [ChatController::class, 'updateContext'])->name('user.updateContext');
